@@ -4,8 +4,8 @@ class Body:
 
     def __init__(self, mass, position, velocity):
         self.mass = mass # mass of body [kg]
-        self.position = position # position of body [m]
-        self.velocity = velocity # velocity of body [m/s]
+        self.position = np.array(position) # position of body [m]
+        self.velocity = np.array(velocity) # velocity of body [m/s]
 
 # initialize bodies with random masses, positions, and velocities over set range
 # bodies[n] = Body(mass, position [x, y], velocity [vx, vy])
