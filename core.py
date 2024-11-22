@@ -8,7 +8,7 @@ class Body:
         self.velocity = np.array(velocity) # velocity of body [m/s]
 
 # initialize bodies with random masses, positions, and velocities over set range
-# bodies[n] = Body(mass, position [x, y], velocity [vx, vy])
+# num_bodies [scalar], mass_range [low, high], position_range [low, high], velocity_range [low, high]
 def initialize_bodies(num_bodies, mass_range, position_range, velocity_range):
 
     masses = np.random.uniform(mass_range[0], mass_range[1], num_bodies)
