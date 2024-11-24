@@ -18,6 +18,9 @@ def initialize_bodies(num_bodies, mass_range, position_range, velocity_range):
     # returning list of bodies
     return [Body(masses[i], positions[i], velocities[i]) for i in range(num_bodies)]
 
+def calculate_force(body1, body2):
+    G = 1
+
 class NBodySimulation:
 
     # bodies = list of bodies involved in simulation
