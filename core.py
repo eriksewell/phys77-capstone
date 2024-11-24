@@ -38,9 +38,11 @@ def calculate_displacement(bodies):
 
     return U, R
 
-def calculate_force(bodies, U, R):
+def calculate_force(bodies):
 
     G = 1 # Gravitational constant
+
+    U, R = calculate_displacement(bodies)
 
     # F[k,m,0] = x-component of force vector on body_m from body_k
     F = np.zeros([len(bodies), len(bodies), 2]) # 3D force matrix
