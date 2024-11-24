@@ -1,10 +1,9 @@
 import numpy as np
-import matplotlib.pyplot as plt
 
 class Body:
 
     def __init__(self, mass, position, velocity):
-        self.mass = mass # mass of body [kg]
+        self.mass = np.float64(mass) # mass of body [kg]
         self.position = np.array(position, dtype=np.float64) # position of body [m]
         self.velocity = np.array(velocity, dtype=np.float64) # velocity of body [m/s]
 
