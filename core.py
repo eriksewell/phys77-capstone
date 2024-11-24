@@ -1,11 +1,12 @@
 import numpy as np
+import matplotlib.pyplot as plt
 
 class Body:
 
     def __init__(self, mass, position, velocity):
         self.mass = mass # mass of body [kg]
-        self.position = np.array(position) # position of body [m]
-        self.velocity = np.array(velocity) # velocity of body [m/s]
+        self.position = np.array(position, dtype=np.float64) # position of body [m]
+        self.velocity = np.array(velocity, dtype=np.float64) # velocity of body [m/s]
 
 # initialize bodies with random masses, positions, and velocities over set range
 # num_bodies [scalar], mass_range [low, high], position_range [low, high], velocity_range [low, high]
@@ -22,39 +23,33 @@ def calculate_displacement(bodies):
 
     # U[i,j,0] = x-component of displacement unit vector from body_i to body_j
     U = np.zeros([len(bodies), len(bodies), 2]) # 3D displacement matrix
+    R = np.zeros([len(bodies), len(bodies)]) # 2D distance matrix
 
-    for i, body1 in enumerate(bodies):
-        for j, body2 in enumerate(bodies):
-            if j > i: # only calculate upper triangle of skew symmetric matrix
-                d = body2.position - body1.position # displacement from body1 to body2
-                r = np.linalg.norm(d) # distance between bodies
-                if r != 0:
+    for i, body_i in enumerate(bodies):
+        for j, body_j in enumerate(bodies):
+            if j > i: # only calculate upper triangle of matrix
+                d = body_j.position - body_i.position # displacement from body1 to body2
+                r = np.linalg.norm(d) # calculate distance between bodies
+                R[i, j] = r # fill upper triangle of distance matrix
+                R[j, i] = R[i, j] # fill symmetric matrix
+                if r != 0: # avoid division by zero
                     U[i, j] = d / r # calculate displacement unit vector between bodies
-                    U[j, i] = -U[i, j] # fill skew symmetric matrix
-                else:
-                    U[i, j] = 0 # avoid division by 0
-                    U[j, i] = 0 # avoid division by 0
-    
-    print(f'X components of displacement unit vectors \n{U[:,:,0]}')
-    print(f'Y components of displacement unit vectors \n{U[:,:,1]}')
+                    U[j, i] = -U[i, j] # fill skew symmetric matrix 
 
-    return U
+    return U, R
 
-def calculate_force(bodies, U):
+def calculate_force(bodies, U, R):
 
     G = 1 # Gravitational constant
 
+    # F[k,m,0] = x-component of force vector on body_m from body_k
+    F = np.zeros([len(bodies), len(bodies), 2]) # 3D force matrix
+
+    for k, body_k in enumerate(bodies):
+        for m, body_m in enumerate(bodies):
+            if m > k: # only calculate upper triangle of matrix
+                if R[k,m] != 0: # avoid division by zero
+                    F[k, m] = (G * bodies[k].mass * bodies[m].mass / R[m, k]**2) * U[m, k] # calculate force on body_k from body_m
+                    F[m, k] = -F[k, m] # fill skew symmetric matrix
     
-
-class NBodySimulation:
-
-    # bodies = list of bodies involved in simulation
-    def __init__(self, bodies):
-        self.constants()
-        self.bodies = bodies
-
-    def constants(self):
-        self.G = 6.67430e-11 # gravitational constant [N*m^2/kg^2]
-        self.c = 3e8 # speed of light [m/s]
-
-    # run simulation
+    return F
