@@ -50,7 +50,7 @@ def calculate_force(bodies):
         for m, body_m in enumerate(bodies):
             if m > k: # only calculate upper triangle of matrix
                 if R[k,m] != 0: # avoid division by zero
-                    F[k, m] = (G * bodies[k].mass * bodies[m].mass / R[m, k]**2) * U[m, k] # calculate force on body_k from body_m
+                    F[k, m] = (G * bodies[k].mass * bodies[m].mass / R[m, k]**2) * U[m, k] # calculate force on body_m from body_k
                     F[m, k] = -F[k, m] # fill skew symmetric matrix
     
     return F
