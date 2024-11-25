@@ -35,4 +35,4 @@ def calculate_force(bodies):
                 F[i] += F_ij # calculate net force on body_i
                 F[j] -= F_ij # calculate net force on body_j
     
-    return F
+    return F # return net force array
