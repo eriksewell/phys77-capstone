@@ -18,39 +18,21 @@ def initialize_bodies(num_bodies, mass_range, position_range, velocity_range):
     # returning list of bodies
     return [Body(masses[i], positions[i], velocities[i]) for i in range(num_bodies)]
 
-def calculate_displacement(bodies):
-
-    # U[i,j,0] = x-component of displacement unit vector from body_i to body_j
-    U = np.zeros([len(bodies), len(bodies), 2]) # 3D displacement matrix
-    R = np.zeros([len(bodies), len(bodies)]) # 2D distance matrix
-
-    for i, body_i in enumerate(bodies):
-        for j, body_j in enumerate(bodies):
-            if j > i: # only calculate upper triangle of matrix
-                d = body_j.position - body_i.position # displacement from body1 to body2
-                r = np.linalg.norm(d) # calculate distance between bodies
-                R[i, j] = r # fill upper triangle of distance matrix
-                R[j, i] = R[i, j] # fill symmetric matrix
-                if r != 0: # avoid division by zero
-                    U[i, j] = d / r # calculate displacement unit vector between bodies
-                    U[j, i] = -U[i, j] # fill skew symmetric matrix 
-
-    return U, R
 
 def calculate_force(bodies):
 
-    G = 1 # Gravitational constant
+    G = 1 # gravitational constant
+    soft = 0.05 # softening parameter
 
-    U, R = calculate_displacement(bodies)
+    F = np.zeros((len(bodies), 2)) # initialize net force array
 
-    # F[k,m,0] = x-component of force vector on body_m from body_k
-    F = np.zeros([len(bodies), len(bodies), 2]) # 3D force matrix
-
-    for k, body_k in enumerate(bodies):
-        for m, body_m in enumerate(bodies):
-            if m > k: # only calculate upper triangle of matrix
-                if R[k,m] != 0: # avoid division by zero
-                    F[k, m] = (G * bodies[k].mass * bodies[m].mass / R[m, k]**2) * U[m, k] # calculate force on body_m from body_k
-                    F[m, k] = -F[k, m] # fill skew symmetric matrix
+    for i, body_i in enumerate(bodies):
+        for j, body_j in enumerate(bodies):
+            if i != j: # avoid self force calculation
+                # displacement vector from body_i to body_j
+                r_ji = bodies[j].position - bodies[i].position 
+                # force vector on body_i from body_j
+                F_ij = (G * bodies[i].mass * bodies[j].mass * r_ji) / ((np.linalg.norm(r_ji) + soft)**3)
+                F[i] += F_ij # calculate net force on body_i
     
     return F
