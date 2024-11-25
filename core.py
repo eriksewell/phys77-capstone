@@ -27,12 +27,12 @@ def calculate_force(bodies):
     F = np.zeros((len(bodies), 2)) # initialize net force array
 
     for i, body_i in enumerate(bodies):
-        for j, body_j in enumerate(bodies):
-            if i != j: # avoid self force calculation
+        for j in range(i + 1, len(bodies)): # avoid redundant force calculations
                 # displacement vector from body_i to body_j
                 r_ji = bodies[j].position - bodies[i].position 
                 # force vector on body_i from body_j
                 F_ij = (G * bodies[i].mass * bodies[j].mass * r_ji) / ((np.linalg.norm(r_ji) + soft)**3)
                 F[i] += F_ij # calculate net force on body_i
+                F[j] -= F_ij # calculate net force on body_j
     
     return F
