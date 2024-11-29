@@ -40,43 +40,43 @@ class Node:
         quad3points = []
         quad4points = []
 
-        print("subdivide bodies is" + str(bodies))
-        print('scanned points in node' + str(self.points))
+        # print("subdivide bodies is" + str(bodies))
+        # print('scanned points in node' + str(self.points))
         for i in self.points:
             
-            if  bodies[i].position[0] >= self.nodeposition[0]:
+            if  bodies[i].position[0] <= self.nodeposition[0]:
                 if bodies[i].position[1] >= self.nodeposition[1]:
-                    print(str(i) +' sorted into quad1')
+                    # print(str(i) +' sorted into quad1')
                     quad1points.append(i)
                 else:
-                    print(str(i) +' sorted into quad3')
+                    # print(str(i) +' sorted into quad3')
                     quad3points.append(i)
             else:
                 if bodies[i].position[1] >= self.nodeposition[1]:
-                    print(str(i) +' sorted into quad2')
+                    # print(str(i) +' sorted into quad2')
                     quad2points.append(i)
                 else:
-                    print(str(i) +' sorted into quad4')
+                    # print(str(i) +' sorted into quad4')
                     quad4points.append(i)
         
 
-        quad1bodies = [bodies[i] for i in quad1points]
-        quad2bodies = [bodies[i] for i in quad2points]
-        quad3bodies = [bodies[i] for i in quad3points]
-        quad4bodies = [bodies[i] for i in quad4points]
+        # quad1bodies = [bodies[i] for i in quad1points]
+        # quad2bodies = [bodies[i] for i in quad2points]
+        # quad3bodies = [bodies[i] for i in quad3points]
+        # quad4bodies = [bodies[i] for i in quad4points]
 
-        print('quad1bodies'+ str(quad1bodies))
-        print('quad2bodies'+ str(quad2bodies))
-        print('quad3bodies'+ str(quad3bodies))
-        print('quad4bodies'+ str(quad4bodies))
+        # print('quad1bodies'+ str(quad1bodies))
+        # print('quad2bodies'+ str(quad2bodies))
+        # print('quad3bodies'+ str(quad3bodies))
+        # print('quad4bodies'+ str(quad4bodies))
 
-        nodelist.append(Node(quad1points, [self.nodeposition[0]-(simsize/2**self.size+1), self.nodeposition[1]+(simsize/2**self.size+1)], self.size+1))
+        nodelist.append(Node(quad1points, [self.nodeposition[0]-(simsize/(2**(self.size+1))), self.nodeposition[1]+(simsize/(2**(self.size+1)))], self.size+1))
         self.quad1 = len(nodelist)-1
-        nodelist.append(Node(quad2points, [self.nodeposition[0]+(simsize/2**self.size+1), self.nodeposition[1]+(simsize/2**self.size+1)], self.size+1))
+        nodelist.append(Node(quad2points, [self.nodeposition[0]+(simsize/(2**(self.size+1))), self.nodeposition[1]+(simsize/(2**(self.size+1)))], self.size+1))
         self.quad2 = len(nodelist)-1
-        nodelist.append(Node(quad3points, [self.nodeposition[0]-(simsize/2**self.size+1), self.nodeposition[1]-(simsize/2**self.size+1)], self.size+1))
+        nodelist.append(Node(quad3points, [self.nodeposition[0]-(simsize/(2**(self.size+1))), self.nodeposition[1]-(simsize/(2**(self.size+1)))], self.size+1))
         self.quad3 = len(nodelist)-1
-        nodelist.append(Node(quad4points, [self.nodeposition[0]+(simsize/2**self.size+1), self.nodeposition[1]-(simsize/2**self.size+1)], self.size+1))
+        nodelist.append(Node(quad4points, [self.nodeposition[0]+(simsize/(2**(self.size+1))), self.nodeposition[1]-(simsize/(2**(self.size+1)))], self.size+1))
         self.quad4 = len(nodelist)-1
 
 # checking the quad.
@@ -87,12 +87,12 @@ class Node:
         
         if len(self.points) > 1:
             self.subdivide(bodies, nodelist, simsize)
-            print('new node quad 1'+str(nodelist[self.quad1]))
-            print('new node quad 2'+str(nodelist[self.quad2]))
-            print('new node quad 3'+str(nodelist[self.quad3]))
-            print('new node quad 4'+str(nodelist[self.quad4]))
+            # print('new node quad 1'+str(nodelist[self.quad1]))
+            # print('new node quad 2'+str(nodelist[self.quad2]))
+            # print('new node quad 3'+str(nodelist[self.quad3]))
+            # print('new node quad 4'+str(nodelist[self.quad4]))
 
-            print('new recursions')
+            # print('new recursions')
             nodelist[self.quad1].checkQuad(bodies, nodelist, simsize)
             nodelist[self.quad2].checkQuad(bodies, nodelist, simsize)
             nodelist[self.quad3].checkQuad(bodies, nodelist, simsize)
@@ -115,11 +115,4 @@ class Quadtree:
         self.nodelist = [Node(list(range(len(bodies))), [0, 0], 0)]
         
         self.nodelist[0].checkQuad(self.bodies, self.nodelist, self.simsize)
-
-# [body.position[0] for body in bodies] - x coordinates
-# [body.position[1] for body in bodies] - y coordinates
-
-
-# quadtree process
-# checkquadrant(). if more than one body, run subdivide, then checkquadrant() again
-#   
+   
