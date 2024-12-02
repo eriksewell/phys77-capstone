@@ -34,5 +34,35 @@ def calculate_force(bodies):
                 F_ij = (G * bodies[i].mass * bodies[j].mass * r_ji) / ((np.linalg.norm(r_ji) + soft)**3)
                 F[i] += F_ij # calculate net force on body_i
                 F[j] -= F_ij # calculate net force on body_j
-    
+
     return F # return net force array
+
+def energy_cons(bodies):
+
+    G = 1
+    soft = 0.05
+
+    kinetic_energy = 0
+    potential_energy = 0 
+
+
+    for i, body_i in enumerate(bodies):
+        kinetic_energy += 0.5 * bodies[i].mass * (np.linalg.norm(bodies[i].velocity) ** 2)
+        for j in range(i + 1, len(bodies)): # avoid redundant force calculations
+                # displacement vector from body_i to body_j
+                r_ij = bodies[j].position - bodies[i].position 
+                # updating total Potential Energy 
+                potential_energy += -(G * bodies[i].mass * bodies[j].mass) / (np.linalg.norm(r_ij + soft))
+    # calculating total energy of the system
+    total_energy = potential_energy + kinetic_energy
+    return total_energy
+
+def momentum_cons(bodies):
+
+    momentum = np.zeros(2) # initialize system's momentum from rest (magnitude and direction)
+
+    for body in bodies:
+        # updating total momentum vector
+        momentum += body.mass * body.velocity
+
+    return momentum
