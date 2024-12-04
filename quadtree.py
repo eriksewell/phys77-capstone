@@ -16,13 +16,16 @@ class Node:
         self.quad4 = None
 
 # calculates the center of mass of all bodies within the node
-    def CoMass(self, bodies):
+    def CoM(self, bodies):
 
-        # calculate center of mass of node
-        CoM = sum(bodies[i].mass * bodies[i].position for i in self.points) / sum(bodies[i].mass for i in self.points)
+        if len(self.points) != 0:
+            # calculate center of mass of node
+            CoM = sum(bodies[i].mass * bodies[i].position for i in self.points) / sum(bodies[i].mass for i in self.points)
 
-        return CoM
-
+            return CoM
+        else:
+            return
+        
 # passed variable "bodies" should be all of the bodies in the node's quadrant
 # passed variable "nodelist" is the list of nodes within the quadtree, and is passed to the function for every recursion
 # simsize is consistent, and is modified based on the size of the node
