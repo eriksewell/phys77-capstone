@@ -1,5 +1,5 @@
 # ignore all .pyc files
 *.pyc
-
+*.mp4
 __pycache__/
 .ipynb_checkpoints/

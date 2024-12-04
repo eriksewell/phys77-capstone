@@ -3,7 +3,7 @@ from core import Body
 class Node:
 
 #Initializes Nodes. 
-#Points should be a list of all bodies within the bounds (as a list of the body class)
+#Points should be a list of the indices of the bodies within the node
 #Measure position of nodes from center of the node
 #size should be an integer. will determine size of the nodes based upon a fraction of the total size: e.g. (n/2**size)
     def __init__(self, points, nodeposition, size):
@@ -15,21 +15,13 @@ class Node:
         self.quad3 = None
         self.quad4 = None
 
-# calculates center of mass of selected points
-# passes all bodies in their totality, as well as the indices of the selected bodies
-# note: note sure if this works just yet, still working on quadtree generation
-    def CoMass(self, bodies, simsize):
-        masses = [bodies[i].masses() for i in self.points]
-        positions = [bodies[i].positions() for i in self.points] 
-        
-        Xproducts = masses*positions[0]
-        XCoM = Xproducts.sum()/masses.sum()
+# calculates the center of mass of all bodies within the node
+    def CoMass(self, bodies):
 
-        Yproducts = masses*positions[1]
-        YCoM = Yproducts.sum()/masses.sum()
+        # calculate center of mass of node
+        CoM = sum(bodies[i].mass * bodies[i].position for i in self.points) / sum(bodies[i].mass for i in self.points)
 
-        return XCoM, YCoM
-
+        return CoM
 
 # passed variable "bodies" should be all of the bodies in the node's quadrant
 # passed variable "nodelist" is the list of nodes within the quadtree, and is passed to the function for every recursion
