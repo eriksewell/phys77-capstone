@@ -49,7 +49,9 @@ class Node:
                     quad2points.append(i)
                 else:
                     quad4points.append(i)
-        
+                    
+# Quad points => [1] [2]
+#             => [3] [4]
 # Appends new child nodes to the nodelist
 # Existing parent node is given the indices to the child node within the nodelist
         nodelist.append(Node(quad1points, [self.nodeposition[0]-(simsize/(2**(self.size+1))), self.nodeposition[1]+(simsize/(2**(self.size+1)))], self.size+1))
