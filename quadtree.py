@@ -1,4 +1,5 @@
 from core import Body
+import numpy as np
 
 class Node:
 
@@ -15,16 +16,18 @@ class Node:
         self.quad3 = None
         self.quad4 = None
 
-# calculates the center of mass of all bodies within the node
-    def CoM(self, bodies):
+# calculates the center of mass and total mass of all bodies in current node
+    def find_CoM(self, bodies):
 
         if len(self.points) != 0:
+            # Calculates total mass of node
+            Mass = sum(bodies[i].mass for i in self.points)
             # calculate center of mass of node
-            CoM = sum(bodies[i].mass * bodies[i].position for i in self.points) / sum(bodies[i].mass for i in self.points)
+            CoM = sum(bodies[i].mass * bodies[i].position for i in self.points) / Mass
 
-            return CoM
+            return CoM, Mass
         else:
-            return
+            return None, 0
         
 # passed variable "bodies" should be all of the bodies in the node's quadrant
 # passed variable "nodelist" is the list of nodes within the quadtree, and is passed to the function for every recursion
@@ -94,4 +97,75 @@ class Quadtree:
         self.nodelist = [Node(list(range(len(bodies))), [0, 0], 1)]
         
         self.nodelist[0].checkQuad(self.bodies, self.nodelist, self.simsize)
-   
+
+    # determine if ratio of node size to distance satisfies threshold for approximation
+    def check_distance(self, node_index, body_index):
+
+        theta = 0.5 # simulation accuracy parameter
+
+        CoM, Mass = self.nodelist[node_index].find_CoM(self.bodies)
+
+        if CoM is None:
+            return False
+        
+        dimension = self.simsize / 2**(self.nodelist[node_index].size-1) # dimension of node region
+        distance = np.linalg.norm(self.bodies[body_index].position - CoM) # distance from body to CoM of node
+
+        if dimension / distance < theta:
+            return True
+        
+        else:
+            return False
+        
+    # determine if the current node contains the body we are calculating forces on
+    def contains_self(self, node_index, body_index):
+
+        if body_index in self.nodelist[node_index].points:
+            return True
+        
+        else:
+            return False
+
+    # Traverse the quadtree and calculate forces
+    def traverse_quadtree(self, node_index, body_index):
+        
+        # Check if body is in current node
+        if self.contains_self(node_index, body_index):
+
+            # Check if current node has children
+            if self.nodelist[node_index].quad1 is not None:
+
+                self.traverse_quadtree(self.nodelist[node_index].quad1, body_index)
+                self.traverse_quadtree(self.nodelist[node_index].quad2, body_index)
+                self.traverse_quadtree(self.nodelist[node_index].quad3, body_index)
+                self.traverse_quadtree(self.nodelist[node_index].quad4, body_index)
+
+            # Current node has no children
+            else:
+                return # Current node only contains self
+            
+        # Body not in current node
+        else:
+            if self.check_distance(node_index, body_index):
+                # Calculate force on group here
+                CoM, Mass = self.nodelist[node_index].find_CoM(self.bodies)
+                self.bodies[body_index].calculate_force(CoM, Mass)
+
+            # Current node fails distance check
+            else:
+                if self.nodelist[node_index].quad1 is not None:
+
+                    self.traverse_quadtree(self.nodelist[node_index].quad1, body_index)
+                    self.traverse_quadtree(self.nodelist[node_index].quad2, body_index)
+                    self.traverse_quadtree(self.nodelist[node_index].quad3, body_index)
+                    self.traverse_quadtree(self.nodelist[node_index].quad4, body_index)
+
+                # Current node has no children
+                else:
+                    if len(self.nodelist[node_index].points) == 0:
+                        # Current node is empty
+                        return
+                    else:     
+                        # Calculate force on single body here
+                        self.bodies[body_index].calculate_force(self.bodies[self.nodelist[node_index].points[0]].position, self.bodies[self.nodelist[node_index].points[0]].mass)
+

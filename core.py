@@ -8,17 +8,17 @@ class Body:
         self.velocity = np.array(velocity) # velocity of body [m/s]
         self.force = np.array([0, 0]) # force on body [N]
 
-    def calculate_force(self, other_body):
+    def calculate_force(self, pos, mass):
         G = 1 # gravitational constant
         soft = 0.05 # softening parameter
 
         # displacement vector from self to other_body
-        r = other_body.position - self.position 
+        r = pos - self.position 
 
         # force vector on self from other_body
-        F = (G * other_body.mass * self.mass * r) / ((np.linalg.norm(r) + soft)**3)
+        F = (G * mass * self.mass * r) / ((np.linalg.norm(r) + soft)**3)
 
-        return F # return force vector on self from other_body
+        self.force = F # update force on body
 
 # initialize bodies with random masses, positions, and velocities over set range
 # num_bodies [scalar], mass_range [low, high], position_range [low, high], velocity_range [low, high]
