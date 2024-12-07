@@ -70,6 +70,10 @@ class Node:
 # Passed "bodies" variable is all bodies within
     def checkQuad(self, bodies, nodelist, simsize):
 
+        # Re-check traverse logic for leaf nodes with more than one body to ensure this works
+        if simsize / (2**self.size) < 0.01:  # Avoid small quadrants
+            return
+
 # If this part ever breaks in the future, just make it so that len(self.points) == 1 or len(self.points) == 0
         if len(self.points) <= 1 :
 
