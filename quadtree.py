@@ -170,6 +170,7 @@ class Quadtree:
                         # Current node is empty
                         return
                     else:     
-                        # Calculate force on single body here
-                        self.bodies[body_index].calculate_force(self.bodies[self.nodelist[node_index].points[0]].position, self.bodies[self.nodelist[node_index].points[0]].mass)
-
+                        # Calculate force on bodies in leaf node here
+                        for point in self.nodelist[node_index].points:
+                            self.bodies[body_index].calculate_force(self.bodies[point].position, self.bodies[point].mass)
+                        
