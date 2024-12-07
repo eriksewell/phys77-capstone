@@ -3,12 +3,13 @@ import numpy as np
 class Body:
 
     def __init__(self, mass, position, velocity):
-        self.mass = mass # mass of body [kg]
-        self.position = np.array(position, dtype=np.float64) # position of body [m]
-        self.velocity = np.array(velocity, dtype=np.float64) # velocity of body [m/s]
-        self.force = np.array([0, 0], dtype=np.float64) # force on body [N]
+        self.mass = mass # mass of body
+        self.position = np.array(position, dtype=np.float64) # position of body
+        self.velocity = np.array(velocity, dtype=np.float64) # velocity of body
+        self.force = np.array([0, 0], dtype=np.float64) # force on body
 
     def calculate_force(self, pos, mass):
+
         G = 1 # gravitational constant
         soft = 0.1 # softening parameter
 
