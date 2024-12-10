@@ -3,9 +3,9 @@ import numpy as np
 class Body:
 
     def __init__(self, mass, position, velocity):
-        self.mass = np.float64(mass) # mass of body [kg]
-        self.position = np.array(position, dtype=np.float64) # position of body [m]
-        self.velocity = np.array(velocity, dtype=np.float64) # velocity of body [m/s]
+        self.mass = np.float64(mass) # mass of body
+        self.position = np.array(position, dtype=np.float64) # position of body
+        self.velocity = np.array(velocity, dtype=np.float64) # velocity of body
 
 # initialize bodies with random masses, positions, and velocities over set range
 # num_bodies [scalar], mass_range [low, high], position_range [low, high], velocity_range [low, high]
