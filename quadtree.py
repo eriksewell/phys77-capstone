@@ -16,7 +16,7 @@ class Node:
         self.quad3 = None
         self.quad4 = None
 
-# calculates the center of mass and total mass of all bodies in current node
+    # calculates the center of mass and total mass of all bodies in current node
     def find_CoM(self, bodies):
 
         if len(self.points) != 0:
@@ -146,7 +146,11 @@ class Quadtree:
 
             # Current node has no children
             else:
-                return # Current node only contains self
+                # Calculate force on bodies in leaf node containing self
+                for point in self.nodelist[node_index].points:
+                    if point != body_index:
+                        self.bodies[body_index].calculate_force(self.bodies[point].position, 
+                                                                self.bodies[point].mass)
             
         # Body not in current node
         else:
